@@ -6,6 +6,7 @@ import pandas as pd
 import streamlit as st
 
 from src.sensors_v3 import SPECS, generate_observation
+from src.evidence_v3 import export_evidence
 
 API_URL = "http://127.0.0.1:8766"
 st.set_page_config(page_title="Global Ocean Observatory — V3.0", layout="wide")
@@ -76,7 +77,7 @@ try:
             st.info("No stored samples for this parameter.")
         st.download_button(
             "Export synthetic records (JSON)",
-            data=json.dumps({"source_type": "synthetic_simulator", "records": records}, indent=2, default=str),
+            data=json.dumps(export_evidence(records), indent=2, ensure_ascii=False),
             file_name="v3_synthetic_observations.json", mime="application/json",
         )
 except (urllib.error.URLError, TimeoutError, ValueError, OSError, KeyError) as exc:
