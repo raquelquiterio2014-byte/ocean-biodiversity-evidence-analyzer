@@ -1,6 +1,7 @@
 """Localhost-only prototype HTTP JSON API, standard library; no device connectivity."""
 import json
 import sqlite3
+from contextlib import closing
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -12,7 +13,7 @@ DB = Path(__file__).resolve().parents[1] / "data" / "v3_synthetic.sqlite3"
 def init_db(path=DB):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    with sqlite3.connect(path) as con:
+    with closing(sqlite3.connect(path)) as con, con:
         con.execute("""CREATE TABLE IF NOT EXISTS synthetic_observations (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             payload_sha256 TEXT NOT NULL UNIQUE,
@@ -25,7 +26,7 @@ def store_observation(obs, path=DB):
     obs = validate_observation(obs)
     digest = checksum(obs)
     path = init_db(path)
-    with sqlite3.connect(path) as con:
+    with closing(sqlite3.connect(path)) as con, con:
         cur = con.execute("INSERT OR IGNORE INTO synthetic_observations (payload_sha256, received_at_utc, payload_json) VALUES (?, ?, ?)",
             (digest, datetime.now(timezone.utc).isoformat(), json.dumps(obs, sort_keys=True)))
         inserted = cur.rowcount == 1
@@ -35,7 +36,7 @@ def recent_observations(path=DB, limit=100):
     if type(limit) is not int or not 1 <= limit <= 500:
         raise ValueError("Invalid limit")
     path = init_db(path)
-    with sqlite3.connect(path) as con:
+    with closing(sqlite3.connect(path)) as con, con:
         rows = con.execute("SELECT payload_json FROM synthetic_observations ORDER BY id DESC LIMIT ?", (limit,)).fetchall()
     return [json.loads(row[0]) for row in rows]
 
