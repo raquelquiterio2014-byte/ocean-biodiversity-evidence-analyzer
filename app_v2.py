@@ -1,4 +1,4 @@
-"""V2 experimental interface; V1.0 app.py remains unchanged."""
+"""V2 interface; V1.0 app.py remains unchanged."""
 import json
 import pandas as pd
 import streamlit as st
@@ -6,9 +6,9 @@ from src.geospatial import REGIONS, fetch_region
 from src.images import reference_photo
 
 st.set_page_config(page_title="Global Geospatial Explorer V2.0", layout="wide")
-st.title("🌊 Global Geospatial Explorer — V2.0 (Development)")
+st.title("🌊 Global Geospatial Explorer — V2.0")
 st.caption("OBIS real occurrence samples | Approximate region windows | Not ocean-wide abundance estimates")
-st.warning("V2.0 is under development. Region rectangles are approximate, not official ocean boundaries.")
+st.warning("Region rectangles are approximate, not official ocean boundaries.")
 region = st.selectbox("Ocean search region", list(REGIONS))
 size = st.slider("Maximum records per geographic window", 10, 300, 100, 10)
 name = st.text_input("Scientific name contains (optional; filters returned sample)", max_chars=120)
