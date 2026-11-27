@@ -10,3 +10,9 @@ __pycache__/
 obis_evidence.json
 .DS_Store
 .idea/
+
+# Local runtime databases and generated sensor observations
+data/
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
